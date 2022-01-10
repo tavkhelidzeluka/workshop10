@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{{ post.title }}</h1>
+    
+    {% if request.user == post.user %} 
+        <form action="{% url 'blog:post-delete' %}" method='POST'>
+            {% csrf_token %}
+            <input name='pk' value='{{ post.id }}' hidden />
+            <button class='btn btn-danger'>Delete</button> 
+        </form>
+    {% endif %}
+    {{ post.created_date }} - {{ post.user.username }}
+    <p>
+        {{ post.body }}
+    </p>
+{% endblock content %}

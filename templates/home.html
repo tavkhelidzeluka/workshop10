@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Home Page</h1>
+    <a class='btn btn-success' href="{% url 'blog:post-create' %}">Post</a>
+
+    <div class='d-flex'>
+        {% for post in posts %}
+            <div class="card" style="width: 18rem;">
+                <img src="{{ post.background_image.url }}" class="card-img-top" alt="{{ post.title }}-image">
+                <div class="card-body">
+                <h5 class="card-title">{{ post.title }}</h5>
+                <a href="{% url 'blog:post-details' post.id %}" class="btn btn-primary">Details</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+    
+{% endblock content %}
