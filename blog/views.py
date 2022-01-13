@@ -1,12 +1,14 @@
 from django import forms
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.http.response import HttpResponseBadRequest, HttpResponseNotAllowed
+from django.http.response import HttpResponseBadRequest, HttpResponseNotAllowed, HttpResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
 from django.views.generic.edit import DeleteView
 from blog.models import Post
 from django.contrib.auth.decorators import login_required
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView
+from django.contrib.messages.views import SuccessMessageMixin
 
 from blog.forms import PostForm
 
@@ -36,22 +38,32 @@ def post_create(request):
         form = PostForm(request.POST, request.FILES, user=request.user)
 
         if not form.is_valid():
-             return render(request, 'post-create.html', {
+            return render(request, 'post-create.html', {
                 'form': form
             })
-        
+
         form.save()
         return redirect('blog:home')
-    
+
     return render(request, 'post-create.html', {
         'form': PostForm()
     })
 
-class PostCreateView(CreateView):
+
+class PostListView(ListView):
+    model = Post
+    objects = Post.objects.all()
+    template_name = 'home.html'
+    paginate_by = 1
+
+
+class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Post
     template_name = 'post-create.html'
     form_class = PostForm
-    
+    success_message = "Post successfully created!"
+    login_url = reverse_lazy('blog:home')
+
     def get_success_url(self):
         return reverse('blog:post-details', kwargs={'pk': self.object.pk})
 
@@ -61,15 +73,17 @@ class PostCreateView(CreateView):
 
         return kwargs
 
-# class PostDeleteView(DeleteView):
-#     model = Post
-    
+
+class PostDeleteView(SuccessMessageMixin, DeleteView):
+    model = Post
+    success_url = reverse_lazy('blog:home')
+    success_message = "Post successfully deleted!"
 
 
 
 @login_required(login_url='blog:home')
 def post_delete(request):
-    if request.method != 'POST': 
+    if request.method != 'POST':
         return redirect('blog:home')
 
     post = get_object_or_404(Post, pk=request.POST.get('pk'))

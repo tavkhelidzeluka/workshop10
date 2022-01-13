@@ -1,17 +1,37 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <h1>{{ post.title }}</h1>
-    
-    {% if request.user == post.user %} 
-        <form action="{% url 'blog:post-delete' %}" method='POST'>
-            {% csrf_token %}
-            <input name='pk' value='{{ post.id }}' hidden />
-            <button class='btn btn-danger'>Delete</button> 
-        </form>
-    {% endif %}
-    {{ post.created_date }} - {{ post.user.username }}
+<div class=''>
+    <header class='text-center row mt-3 me-0'>
+        <div class="col-2"></div>
+        <div class="col-8 text-center">
+            <h1>{{ post.title }}</h1>
+        </div>
+        <div class="col-2 d-flex flex-end flex-row-reverse align-items-center">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Actions
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                    {% if request.user == post.user %}
+                    <li><a href="{% url 'blog:post-delete' post.pk %}" class='dropdown-item'>Delete</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+
+    </header>
+
+    {% comment %} <form action="{% url 'blog:post-delete' %}" method='POST'>
+        {% csrf_token %}
+        <input name='pk' value='{{ post.id }}' hidden />
+        <button class='btn btn-danger'>Delete</button>
+    </form> {% endcomment %}
+    {{ post.modified_date }} - {{ post.user.username }}
     <p>
         {{ post.body }}
     </p>
+</div>
+
 {% endblock content %}

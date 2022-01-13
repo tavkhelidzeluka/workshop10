@@ -4,16 +4,42 @@
     <h1>Home Page</h1>
     <a class='btn btn-success' href="{% url 'blog:post-create' %}">Post</a>
 
-    <div class='d-flex'>
-        {% for post in posts %}
-            <div class="card" style="width: 18rem;">
-                <img src="{{ post.background_image.url }}" class="card-img-top" alt="{{ post.title }}-image">
-                <div class="card-body">
-                <h5 class="card-title">{{ post.title }}</h5>
-                <a href="{% url 'blog:post-details' post.id %}" class="btn btn-primary">Details</a>
+    <div class='container'>
+        <div class='row row-cols-5 me-auto justify-content-between'>
+            {% for post in object_list %}
+                <div class="card col m-2 p-0">
+                    <img src="{{ post.background_image.url }}" class="card-img-top" alt="{{ post.title }}-image">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ post.title }}</h5>
+                        <a href="{% url 'blog:post-details' post.id %}" class="btn btn-primary">Details</a>
+                    </div>
                 </div>
-            </div>
-        {% endfor %}
+            {% endfor %}
+        </div>
     </div>
-    
+
+    <div class="paginator-wrapper">
+        {% if page_obj.has_previous %}
+            <a class='btn btn-primary' href="?page=1
+            {% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">პირველი</a>
+            <a class='btn btn-primary' href="?page={{ page_obj.previous_page_number }}
+            {% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">წინა</a>
+        {% endif %}
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a class="btn btn-primary disabled">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a class='btn btn-primary' href="?page={{ num }}
+            {% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+            <a  class='btn btn-primary' href="?page={{ page_obj.next_page_number }}
+            {% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">შემდეგი</a>
+            <a  class='btn btn-primary' href="?page={{ page_obj.paginator.num_pages }}
+            {% if request.GET.search %}&search={{ request.GET.search }}{% endif %}">ბოლო</a>
+        {% endif %}
+    </div>
+
+
 {% endblock content %}
