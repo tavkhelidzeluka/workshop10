@@ -8,3 +8,6 @@ __pycache__/
 *.sqlite3
 
 media/
+
+local.py 
+production.py
