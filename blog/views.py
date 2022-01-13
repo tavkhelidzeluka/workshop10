@@ -54,7 +54,7 @@ class PostListView(ListView):
     model = Post
     objects = Post.objects.all()
     template_name = 'home.html'
-    paginate_by = 1
+    paginate_by = 4
 
 
 class PostCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
