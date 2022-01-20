@@ -24,6 +24,7 @@ from workshop10.settings.common import STATIC_ROOT
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('blog.urls')),
+    path('', include('users.urls'))
 ]
 
 
